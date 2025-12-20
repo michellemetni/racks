@@ -1,12 +1,12 @@
 name: CI/CD Pipeline
 
 on:
-  push:
+  push: #THIS PIPLELINE IS TRIGERED WHEN PUSHING ON MAIN
     branches: ["main"]
   pull_request:
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  IMAGE_NAME: ghcr.io/${{ github.repository }} #DEFINES THE DOCKER IMAGE ONCE
 
 jobs:
   test:
@@ -22,8 +22,8 @@ jobs:
           POSTGRES_PASSWORD: mich
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres -d racks_db"
+        options: >- #WAITS TILL POSTGRESQL IS READY
+          --health-cmd="pg_isready -U postgres -d racks_db" 
           --health-interval=5s
           --health-timeout=3s
           --health-retries=20
@@ -41,13 +41,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"   # change to "21" if your project uses Java 21
+          java-version: "17"
           cache: maven
 
       - name: Run tests
-        run: mvn -B test
+        run: mvn -B test #COMPILING THE PORJECT, START SPRINGBOOT AND CONNECTS TO POSTGRESQL AND RUNS ALL TESTS
 
-  build:
+  build: #RUNS ONLY IF TEST IS PASSED
     name: Build
     runs-on: ubuntu-latest
     needs: test
@@ -60,16 +60,16 @@ jobs:
 
       - name: Set image tag
         id: meta
-        run: echo "tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+        run: echo "tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT #EACH IMAGE WILL BE UNIQUE AND FULL TRACEABILITY
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3 #buildx --> FASTER BUILDS AND PRODUCTION STANDARD
 
       - name: Build image (no push)
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: false
+          push: false #TO AVOID PUSHING BROKEN IMAGES
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
@@ -80,7 +80,7 @@ jobs:
     name: Registry Push
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' #ONLY FOR MERGES ON MAIN
 
     permissions:
       contents: read
@@ -104,7 +104,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          push: true #NOW THE IMAGE IS BUILT, TAGGED AND PUSHED TO GHCR
           tags: |
             ${{ env.IMAGE_NAME }}:${{ needs.build.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
