@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: racks-config
+  namespace: racks
+data:
+  POSTGRES_DB: racks_db
+  POSTGRES_USER: postgres
+
+  # Your Spring Boot app reads these env vars
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/racks_db
+  SPRING_DATASOURCE_USERNAME: postgres

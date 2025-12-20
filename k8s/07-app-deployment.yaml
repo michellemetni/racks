@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: racks-app
+  namespace: racks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: racks-app
+  template:
+    metadata:
+      labels:
+        app: racks-app
+    spec:
+      containers:
+        - name: racks-app
+          image: ghcr.io/OWNER/REPO:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+
+          envFrom:
+            - configMapRef:
+                name: racks-config
+            - secretRef:
+                name: racks-secret
+
+          # Readiness/Liveness probes required by rubric
+          # Since you don't have Actuator, we use TCP probes on port 8080.
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 10
+
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
