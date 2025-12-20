@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"   # change to "21" if your project uses Java 21
+          java-version: "17"   
           cache: maven
 
       - name: Run tests
