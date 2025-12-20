@@ -27,8 +27,7 @@ spec:
             - secretRef:
                 name: racks-secret
 
-          # Readiness/Liveness probes required by rubric
-          # Since you don't have Actuator, we use TCP probes on port 8080.
+          # Since we don't have Actuator, we use TCP probes on port 8080.
           readinessProbe:
             tcpSocket:
               port: 8080

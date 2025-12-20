@@ -40,7 +40,6 @@ spec:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
 
-          # Readiness / liveness probes (required)
           readinessProbe:
             exec:
               command: ["sh", "-c", "pg_isready -U postgres -d racks_db"]
