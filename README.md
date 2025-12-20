@@ -1,11 +1,11 @@
-Racks – CI/CD and Kubernetes Deployment Project
+# Racks – CI/CD and Kubernetes Deployment Project
 
-Project Overview:
+# 1.Project Overview:
 
 This project demonstrates a complete DevOps workflow for a Spring Boot backend application.
 It covers containerization, automation, and orchestration using industry‑standard tools.
 
-The project includes:
+# 1.1 Project Components:
 
 -A Spring Boot REST backend
 
@@ -17,7 +17,7 @@ The project includes:
 
 -Deployment to a local Kubernetes cluster with persistent storage and health checks
 
-Technology Stack:
+# 2.Technology Stack:
 
 -Backend: Spring Boot (Java 17)
 
@@ -35,7 +35,7 @@ Technology Stack:
 
 -Kubernetes Cluster: Docker Desktop Kubernetes
 
-Application Architecture:
+# 3.Application Architecture:
 
 Client
  |
@@ -45,9 +45,9 @@ Client
                |
                |--> PostgreSQL Database (StatefulSet + PVC)
 
-Docker and Docker Compose:
+# 4.Docker and Docker Compose:
 
-Dockerfile:
+# 4.1 Dockerfile:
 
 The application is containerized using a multi‑stage Dockerfile:
 
@@ -55,7 +55,7 @@ The application is containerized using a multi‑stage Dockerfile:
 
 -Runtime stage: Uses a lightweight Java runtime image to run the generated JAR
 
-Docker Compose Stack:
+# 4.2 Docker Compose Stack:
 
 The Docker Compose setup includes:
 
@@ -75,14 +75,13 @@ Stop the containers using:
 
 docker compose down
 
-
-CI/CD Pipeline:
+# 5.CI/CD Pipeline:
 
 A CI/CD pipeline was implemented using GitHub Actions. The pipeline is triggered on pushes to the main branch and on pull requests.
 
-Pipeline Stages:
+# 5.1 Pipeline Stages:
 
-Test Stage:
+# 5.1.1 Test Stage:
 
 -Runs Maven tests
 
@@ -90,13 +89,13 @@ Test Stage:
 
 -Validates that the application can start and interact with a database
 
-Build Stage:
+# 5.1.2 Build Stage:
 
 -Builds the Docker image using the project Dockerfile
 
 -Ensures the application can be successfully containerized
 
-Registry Push Stage:
+# 5.1.3 Registry Push Stage:
 
 -Pushes the Docker image to GitHub Container Registry (GHCR)
 
@@ -104,19 +103,11 @@ Registry Push Stage:
 
 -Tags images as latest and with the commit SHA
 
-CI/CD Benefits:
-
--Automated and repeatable builds
-
--Secure handling of credentials
-
--No manual image creation or deployment steps
-
-Kubernetes Deployment:
+# 6.Kubernetes Deployment:
 
 The application is deployed to a local Kubernetes cluster using Docker Desktop Kubernetes.
 
-Kubernetes Resources:
+# 6.1 Kubernetes Resources:
 
 -Application
 
@@ -132,7 +123,7 @@ Kubernetes Resources:
 
 -Liveness Probe: Restarts the application if it becomes unhealthy
 
-Database (Option A – Inside Kubernetes):
+# Database (Option A – Inside Kubernetes):
 
 -StatefulSet: Manages the PostgreSQL database
 
@@ -140,7 +131,8 @@ Database (Option A – Inside Kubernetes):
 
 -Headless Service: Provides a stable network identity for PostgreSQL
 
-Kubernetes Manifests Structure
+# 7.Kubernetes Manifests Structure
+
 k8s/
 ├── namespace.yaml
 ├── configmap.yaml
@@ -150,12 +142,17 @@ k8s/
 ├── app-deployment.yaml
 ├── app-service.yaml
 
-Deploying to Kubernetes:
--Create the namespace: kubectl apply -f k8s/namespace.yaml
+# 8.Deploying to Kubernetes:
 
--Apply all Kubernetes resources: kubectl apply -f k8s/ -n racks
+# 8.1 Create the namespace: 
 
--Verification:
+kubectl apply -f k8s/namespace.yaml
+
+# 8.2 Apply all Kubernetes resources: 
+
+kubectl apply -f k8s/ -n racks
+
+# 8.3 Verification:
 
 kubectl get pods -n racks
 
@@ -163,21 +160,13 @@ kubectl get services -n racks
 
 kubectl get pvc -n racks
 
-Expected results:
-
--Application and database pods in Running state
-
--PersistentVolumeClaim in Bound state
-
--NodePort service exposed
-
--Accessing the Application
+# 9.Accessing the Application
 
 The application can be accessed through the NodePort service: 
 
 http://localhost:30080. This confirms successful deployment and external access via Kubernetes.
 
-Configuration and Secrets:
+# 10.Configuration and Secrets:
 
 -Application configuration is managed using Kubernetes ConfigMaps
 
@@ -187,7 +176,7 @@ Configuration and Secrets:
 
 -The CI/CD pipeline uses GitHub’s built‑in secret mechanism
 
-Team Members:
+# 11.Team Members:
 
 -Michelle Metni
 
