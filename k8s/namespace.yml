@@ -1,4 +1,3 @@
-#We created a dedicated namespace to isolate our application resources and follow Kubernetes best practices
 apiVersion: v1
 kind: Namespace
 metadata:

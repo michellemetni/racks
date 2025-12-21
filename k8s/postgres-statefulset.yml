@@ -1,3 +1,4 @@
+#to run 1 postgresSQL pods
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -44,8 +45,8 @@ spec:
                 - sh
                 - -c
                 - pg_isready -U postgres
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 10 #wait 10s before first check
+            periodSeconds: 5 #check every 5s
 
   volumeClaimTemplates:
     - metadata:
