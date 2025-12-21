@@ -1,0 +1,10 @@
+#Stores non‑sensitive configuration for the app.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: racks-config
+  namespace: racks
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/racks_db #Database URL
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  SPRING_JPA_SHOW_SQL: "true"

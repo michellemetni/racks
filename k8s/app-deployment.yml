@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: racks-app
+  namespace: racks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: racks-app
+  template:
+    metadata:
+      labels:
+        app: racks-app
+    spec:
+      containers:
+        - name: racks-app
+          image: ghcr.io/michellemetni/racks:latest
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: racks-config
+            - secretRef:
+                name: racks-secret
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
