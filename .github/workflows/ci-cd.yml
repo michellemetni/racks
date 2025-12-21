@@ -56,7 +56,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # GHCR requires lowercase image names (avoid failures)
       - name: Compute image name
         id: img
         run: |

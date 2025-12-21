@@ -77,31 +77,67 @@ docker compose down
 
 # 5.CI/CD Pipeline:
 
-A CI/CD pipeline was implemented using GitHub Actions. The pipeline is triggered on pushes to the main branch and on pull requests.
+The CI/CD pipeline is designed to:
+- Automatically test the application on every change
+- Prevent broken or unstable code from being released
+- Build reproducible Docker images
+- Publish Docker images only from stable code
+  
+# When is the pipeline triggered?
 
-# 5.1 Pipeline Stages:
+# 1. Pull Requests (PR)
 
-# 5.1.1 Test Stage:
+The pipeline is triggered whenever a pull request is opened or updated.
 
--Runs Maven tests
+- Tests are executed using a PostgreSQL service container
+- A Docker image is built
+- The image is NOT pushed to the registry
 
--Uses a PostgreSQL service container inside GitHub Actions
+Pull requests are used to validate changes before merging them into the main branch. Publishing images at this stage would be unsafe.
 
--Validates that the application can start and interact with a database
+# 2. Push to main
 
-# 5.1.2 Build Stage:
+The pipeline is also triggered when code is pushed to the main branch.
 
--Builds the Docker image using the project Dockerfile
+- Tests are executed
+- A Docker image is built
+- The Docker image is pushed to GitHub Container Registry (GHCR)
 
--Ensures the application can be successfully containerized
+The main branch is treated as the stable branch, so only tested and approved code is released.
 
-# 5.1.3 Registry Push Stage:
+# 5.1 Pipeline Stages
+The pipeline is composed of three main stages:
 
--Pushes the Docker image to GitHub Container Registry (GHCR)
+# 1. Test Stage
+- Runs on pull requests and pushes
+- Starts a temporary PostgreSQL service container
+- Uses health checks to wait until the database is ready
+- Executes Maven tests
+- Stops the pipeline immediately if tests fail
 
--Uses GitHub’s built‑in GITHUB_TOKEN for secure authentication
+# 2. Build Stage
+- Runs only if the test stage succeeds
+- Builds the Docker image using Docker Buildx
+- Tags the image with:
+  - the commit SHA (for traceability)
+  - latest (for convenience)
+- Does not publish the image
 
--Tags images as latest and with the commit SHA
+# 3. Push Stage
+- Runs only on pushes to the main branch
+- Authenticates securely to GitHub Container Registry
+- Publishes the Docker image
+
+# 5.2 Design Decisions and Justifications
+
+- Pull requests do not publish Docker images to avoid releasing unstable code
+- The main branch represents the stable version of the application
+- PostgreSQL is run as a service container to test real database integration
+- Health checks are used to avoid flaky pipeline failures
+- Docker images are tagged with the commit SHA for full traceability
+- Sensitive values such as database passwords are stored using GitHub Secrets
+- Docker Buildx and caching are used to improve build performance
+
 
 # 6.Kubernetes Deployment:
 
